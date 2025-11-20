@@ -2,8 +2,8 @@ name: GitHub Activity Generator
 
 on:
   schedule:
-    - cron: "0 * * * *"  # Runs every hour
-  workflow_dispatch:      # Manual trigger
+    - cron: "0 * * * *"   # Runs every hour
+  workflow_dispatch:      # Allows manual run
 
 jobs:
   build:
