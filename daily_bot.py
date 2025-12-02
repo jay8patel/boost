@@ -11,7 +11,6 @@ def main(def_args=sys.argv[1:]):
     args = arguments(def_args)
     curr_date = datetime.now()
     
-    # Check if we are already in a git repo (for automation)
     if os.path.exists('.git'):
         directory = '.'
     else:
@@ -55,17 +54,12 @@ def contribute(date):
     with open(os.path.join(os.getcwd(), 'README.md'), 'a') as file:
         file.write(message(date) + '\n\n')
     run(['git', 'add', '.'])
-    
-    # FIX IS HERE: Removed extra quotes around message and date
-    # Python subprocess handles spaces automatically.
     run(['git', 'commit', '-m', message(date),
          '--date', date.strftime('%Y-%m-%d %H:%M:%S')])
 
 
 def run(commands):
-    # Added checks to print errors if they happen
-    process = Popen(commands)
-    process.wait()
+    Popen(commands).wait()
 
 
 def message(date):
