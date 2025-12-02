@@ -33,10 +33,9 @@ jobs:
           git config --global user.email "action@github.com"
 
       - name: Run Contribution Script
-        run: |
-          # Use the number input from manual run, OR default to 0 for automatic run
-          DAYS=${{ inputs.days_back || '0' }}
-          python daily_bot.py --days_before $DAYS --days_after 1 --frequency 100
+        run: | 
+          # HARDCODED to 1200 to force 3 years of history
+          python daily_bot.py --days_before 1200 --days_after 1 --frequency 100
 
       - name: Push changes
         run: |
