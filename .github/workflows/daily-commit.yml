@@ -2,32 +2,36 @@ name: Daily Contribution
 
 on:
   schedule:
-    - cron: '0 12 * * *'
-  workflow_dispatch:
+    - cron: '0 12 * * *' # Runs at 12:00 UTC daily
+  workflow_dispatch:     # Allows manual run
+
+# START OF FIX: Explicitly grant write permission to the token
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # ensures we have the full history to avoid 'detached' errors
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Configure Git
+      - name: Configure Git Identity
         run: |
           git config --global user.name "GitHub Action"
-          git config --global user.email "your-email@example.com"
+          git config --global user.email "action@github.com"
 
       - name: Run Contribution Script
         run: python daily_bot.py --days_before 0 --days_after 1 --frequency 100
 
       - name: Push changes
         run: |
+          git pull origin main --rebase || echo "No changes to pull"
           git push origin HEAD:main
