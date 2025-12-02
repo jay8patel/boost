@@ -2,10 +2,14 @@ name: Daily Contribution
 
 on:
   schedule:
-    - cron: '0 12 * * *' # Runs at 12:00 UTC daily
-  workflow_dispatch:     # Allows manual run
+    - cron: '0 12 * * *' # Runs daily at 12:00 UTC automatically
+  workflow_dispatch:     # Allows manual trigger with a text box
+    inputs:
+      days_back:
+        description: 'How many days back to go?'
+        required: true
+        default: '0'
 
-# START OF FIX: Explicitly grant write permission to the token
 permissions:
   contents: write
 
@@ -16,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0 # ensures we have the full history to avoid 'detached' errors
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -29,7 +33,10 @@ jobs:
           git config --global user.email "action@github.com"
 
       - name: Run Contribution Script
-        run: python daily_bot.py --days_before 0 --days_after 1 --frequency 100
+        run: |
+          # Use the number input from manual run, OR default to 0 for automatic run
+          DAYS=${{ inputs.days_back || '0' }}
+          python daily_bot.py --days_before $DAYS --days_after 1 --frequency 100
 
       - name: Push changes
         run: |
