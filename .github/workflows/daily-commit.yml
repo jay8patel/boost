@@ -1,0 +1,35 @@
+name: Daily Contribution
+
+on:
+  schedule:
+    - cron: '0 12 * * *' # Runs everyday at noon
+  workflow_dispatch: # Allows manual run
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "your-email@example.com"
+
+      - name: Run Contribution Script
+        # Here we run your NEW file 'daily_bot.py'
+        # -db 0 (0 days before) and -da 1 (1 day after) ensures it commits only for today
+        run: python daily_bot.py --days_before 0 --days_after 1 --frequency 100
+
+      - name: Push changes
+        run: |
+          git push
